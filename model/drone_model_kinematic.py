@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from casadi import sin, cos, atan2
-from util import figure_functions as ff
+from utils import figure_functions as ff
 from pybounds import Simulator
 
 

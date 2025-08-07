@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import ListedColormap
 import figurefirst as fifi
-from util import fly_plot_lib as fpl
-import util
+from utils import fly_plot_lib as fpl
+from utils import util
 
 
 def plot_trajectory(xpos, ypos, phi, color, ax=None, size_radius=None, nskip=0,
