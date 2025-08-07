@@ -1,5 +1,5 @@
 import numpy as np
-import util
+from utils import util
 
 
 class EKF:

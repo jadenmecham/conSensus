@@ -1,8 +1,11 @@
+import sys
+sys.path.append('..')
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from casadi import sin, cos, atan2
-import figure_functions as ff
+from util import figure_functions as ff
 from pybounds import Simulator
 
 

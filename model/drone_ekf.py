@@ -1,7 +1,7 @@
 import numpy as np
 import scipy
 import pandas as pd
-from extended_kalman_filter import EKF, jacobian_numerical
+from model.extended_kalman_filter import EKF, jacobian_numerical
 import matplotlib.pyplot as plt
 
 

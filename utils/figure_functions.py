@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import ListedColormap
 import figurefirst as fifi
-import fly_plot_lib as fpl
+from util import fly_plot_lib as fpl
 import util
 
 
