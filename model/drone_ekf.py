@@ -386,7 +386,7 @@ class DroneEKF:
         # Set current measurement based on measurement names
         measurements_df = pd.DataFrame(measurements, index=[0])
         self.Z = measurements_df.loc[:, self.measurement_names]
-        Z = self.Z.values.squeeze()
+        Z = np.atleast_1d(self.Z.values.squeeze())
 
         # Return measurement
         return Z

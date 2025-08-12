@@ -116,7 +116,7 @@ class EKF:
         """
 
         # Current measurement
-        self.z = np.array(z).copy()
+        self.z = np.atleast_1d(np.array(z).copy())
 
         # Set measurement noise covariance
         if R is not None:
@@ -124,6 +124,7 @@ class EKF:
 
         # Predicted measurements from state estimate
         z_pred = self.h(self.x, self.u)
+        z_pred = np.atleast_1d(z_pred)
 
         # Compute innovation (measurement residual)
         # y = self.z - z_pred
