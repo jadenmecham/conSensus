@@ -107,68 +107,6 @@ class EKF:
         F = self.F_jacobian(self.x, self.u)
         self.P = F @ self.P @ F.T + self.Q
 
-    # def update(self, z, R=None):
-    #     """
-    #     EKF update step with measurement z.
-
-    #     :param z: measurement vector
-    #     :param R: optional measurement noise covariance matrix for this step
-    #     """
-
-    #     # Current measurement
-    #     self.z = np.array(z).copy()
-
-    #     # Set measurement noise covariance
-    #     if R is not None:
-    #         self.R = R
-
-    #     # Predicted measurements from state estimate
-    #     z_pred = self.h(self.x, self.u)
-
-    #     # Compute innovation (measurement residual)
-    #     # y = self.z - z_pred
-    #     y = np.zeros(self.p)
-    #     for j in range(self.p):
-    #         if self.circular_measurements[j]:  # circular measurement
-    #             # y[j] = angle_difference(z[j], z_pred[j])
-    #             # y[j] = angle_difference(self.z[j], z_pred[j])
-    #             y[j] = util.wrapToPi(np.array(self.z[j] - z_pred[j]))
-    #         else:  # non-circular measurement
-    #             y[j] = self.z[j] - z_pred[j]
-
-    #     # Use jacobian of measurement function to compute the innovation/residual covariance
-    #     H = self.H_jacobian(self.x, self.u)
-    #     S = H @ self.P @ H.T + self.R
-
-    #     # Near-optimal Kalman gain
-    #     K = self.P @ H.T @ np.linalg.inv(S)
-
-    #     # Update state estimate
-    #     self.x = self.x + K @ y
-
-    #     # Update state covariance estimate
-    #     I = np.eye(self.P.shape[0])
-    #     # self.P = (I - K @ H) @ self.P
-    #     self.P = (I - K @ H) @ self.P @ (I - K @ H).T + K @ self.R @ K.T
-
-    #     # Update history
-    #     self.history['X'].append(self.x.copy())
-    #     self.history['U'].append(self.u.copy())
-    #     self.history['Z'].append(self.z.copy())
-    #     self.history['P'].append(self.P.copy())
-    #     self.history['Q'].append(self.Q.copy())
-    #     self.history['R'].append(self.R.copy())
-
-    #     # If it's the 1st time-step, set the initial values
-    #     if self.k == 0:
-    #         self.history['Z'][0] = self.z.copy()
-    #         self.history['P'][0] = self.P.copy()
-    #         self.history['Q'][0] = self.Q.copy()
-    #         self.history['R'][0] = self.R.copy()
-
-    #     # Update time-step
-    #     self.k += 1
-
     def update(self, z, R=None):
         """
         EKF update step with measurement z.
@@ -177,26 +115,44 @@ class EKF:
         :param R: optional measurement noise covariance matrix for this step
         """
 
-        # Ensure measurement and prediction are always 1D numpy arrays
-        self.z = np.atleast_1d(np.asarray(z).reshape(-1))
+        # Current measurement
+        self.z = np.atleast_1d(np.array(z).copy())
+
+        # Set measurement noise covariance
         if R is not None:
             self.R = R
-        z_pred = np.atleast_1d(np.asarray(self.h(self.x, self.u)).reshape(-1))
 
+        # Predicted measurements from state estimate
+        z_pred = self.h(self.x, self.u)
+        z_pred = np.atleast_1d(z_pred)
+
+        # Compute innovation (measurement residual)
+        # y = self.z - z_pred
         y = np.zeros(self.p)
         for j in range(self.p):
-            if self.circular_measurements[j]:
-                y[j] = util.wrapToPi(self.z[j] - z_pred[j])
-            else:
+            if self.circular_measurements[j]:  # circular measurement
+                # y[j] = angle_difference(z[j], z_pred[j])
+                # y[j] = angle_difference(self.z[j], z_pred[j])
+                y[j] = util.wrapToPi(np.array(self.z[j] - z_pred[j]))
+            else:  # non-circular measurement
                 y[j] = self.z[j] - z_pred[j]
 
+        # Use jacobian of measurement function to compute the innovation/residual covariance
         H = self.H_jacobian(self.x, self.u)
         S = H @ self.P @ H.T + self.R
+
+        # Near-optimal Kalman gain
         K = self.P @ H.T @ np.linalg.inv(S)
+
+        # Update state estimate
         self.x = self.x + K @ y
+
+        # Update state covariance estimate
         I = np.eye(self.P.shape[0])
+        # self.P = (I - K @ H) @ self.P
         self.P = (I - K @ H) @ self.P @ (I - K @ H).T + K @ self.R @ K.T
 
+        # Update history
         self.history['X'].append(self.x.copy())
         self.history['U'].append(self.u.copy())
         self.history['Z'].append(self.z.copy())
@@ -204,12 +160,14 @@ class EKF:
         self.history['Q'].append(self.Q.copy())
         self.history['R'].append(self.R.copy())
 
+        # If it's the 1st time-step, set the initial values
         if self.k == 0:
             self.history['Z'][0] = self.z.copy()
             self.history['P'][0] = self.P.copy()
             self.history['Q'][0] = self.Q.copy()
             self.history['R'][0] = self.R.copy()
 
+        # Update time-step
         self.k += 1
 
 
