@@ -58,7 +58,7 @@ def plotStateEstimates(indexes_to_test, EKFs, x_est_all, x_cov_all, t_sim_ekf_al
     fig.subplots_adjust(hspace=0.5, wspace=0.5, left=0.22)  # Increase left margin for legend
 
 def ignoreUnobservableCases(EKFs, x_est_all, x_cov_all):
-    estimated_states = x_est_all[0].columns.tolist()
+    estimated_states = x_cov_all[0].columns.tolist()
     print("estiamted states: ",estimated_states)
 
     trustworthy_combos = {state: [] for state in estimated_states}
@@ -69,10 +69,9 @@ def ignoreUnobservableCases(EKFs, x_est_all, x_cov_all):
 
     print(trustworthy_combos)
 
-    for state in trustworthy_combos:
-        print(f"Checking state: {state}")
-        for j in range(len(trustworthy_combos[state])):
-            print('checking ', state, 'with EKF ', trustworthy_combos[state][j])
-            this_cov = x_cov_all[j][state]
-            print(this_cov)
-            print()
+    for state in estimated_states:
+        for i in range(len(trustworthy_combos[state])):
+            print('state: ', state, ' EKF: ', trustworthy_combos[state][i])
+
+    
+            
